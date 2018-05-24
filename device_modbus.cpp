@@ -20,7 +20,7 @@ Modbus_device::Modbus_device() {
 }
 Modbus_device::Modbus_device(unsigned int id,char *path) {
     /*借用基类的构造函数同时赋值id与address*/
-    Base_device::Base_device(id);
+    set_deviceID(id);
     set_deviceType(MODBUS);
 
     temperature=0.0;
@@ -152,10 +152,10 @@ void Modbus_device::set_rd_cmd() {
     rd_cmd[7]=0x0b;
 }
 void Modbus_device::show_temperature() {
-    std::cout<<"Modbus Device "<<get_deviceID()<<" temperature is"<<temperature<<std::endl;
+    std::cout<<"Modbus Device "<<get_deviceID()<<" temperature is "<<temperature<<std::endl;
 }
 void Modbus_device::show_humidity() {
-    std::cout<<"Modbus Device "<<get_deviceID()<<" humidity is"<<humidity<<std::endl;
+    std::cout<<"Modbus Device "<<get_deviceID()<<" humidity is "<<humidity<<std::endl;
 }
 void Modbus_device::run() {
     /*串口打开部分*/
