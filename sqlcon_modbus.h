@@ -14,15 +14,12 @@ using namespace std;
 class sqlcon_modbus:public sqlcon_base
 {
 private:
-    char *host;
-    char *user;
-    char *pd;
-    char *dbname;
+    char *table_name;
 public:
     sqlcon_modbus();
-    sqlcon_modbus(char * ht,char * usr,char * pad,char * name);
+    sqlcon_modbus(char * ht,char * usr,char * pad,char * name,char *tbname);
+    sqlcon_modbus(char *tbname);
     ~sqlcon_modbus();
-    void connect_sql(MYSQL * conn,char * host,char * user,char * pd,char * tbname);
     void connect_sql();
     /*search函数要考虑多种搜索条件,例如只给id，查温度，湿度，或者查温度或者湿度的情况*/
     /*此时暂时写根据id查温湿度的情形*/

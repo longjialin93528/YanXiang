@@ -15,28 +15,37 @@ Modbus_device::Modbus_device() {
     temperature=0.0;
     humidity=0.0;
     set_deviceType(MODBUS);
-    rd_cmd=nullptr;
-    //wt_cmd=nullptr;
+    rd_cmd=NULL;
+    device_path=NULL;
 }
-Modbus_device::Modbus_device(unsigned int id) {
+Modbus_device::Modbus_device(unsigned int id,char *path) {
+    /*借用基类的构造函数同时赋值id与address*/
+    Base_device::Base_device(id);
+    set_deviceType(MODBUS);
+
     temperature=0.0;
     humidity=0.0;
-    set_deviceType(MODBUS);
-    rd_cmd=nullptr;
-    //wt_cmd=nullptr;
-    set_deviceID(id);
-    //set_deviceAddress(address);
+    rd_cmd=new char[8];
+
+    //这里是孙文峰的函数；
+
+
+    /*深度copy地址值*/
+    device_path=new char[strlen(path)+1];
+    strcpy(device_path,path);
+    device_path[strlen(path)]='\0';
 }
 Modbus_device::~Modbus_device() {
-    if(rd_cmd!= nullptr)
+    if(rd_cmd!= NULL)
     {
         delete rd_cmd;
     }
-    //if(wt_cmd!= nullptr)
-    //{
-     //   delete wt_cmd;
-    //}
+    if(device_path!=NULL)
+    {
+        delete device_path;
+    }
 }
+/*私有函数的声明，主要服务于内部函数的实现*/
 bool Modbus_device::is_fullone(char a) {
     unsigned char flag=0x01;
     bool res=1;
@@ -61,6 +70,7 @@ double Modbus_device::func(int *a, int n) {
     }
     return res/10;
 }
+/*可供外部调用的共有函数声明*/
 double Modbus_device::get_temperature(char a,char b) {
     double temperature=0.0;
     int c[9]={0};
@@ -150,10 +160,10 @@ void Modbus_device::show_humidity() {
 void Modbus_device::run() {
     /*串口打开部分*/
     int fd;
-    fd=open("/dev/ttyUSB0",O_RDWR|O_NOCTTY|O_NDELAY);
+    fd=open(device_path,O_RDWR|O_NOCTTY|O_NDELAY);
     if(-1==fd)
     {
-        perror("/dev/ttyUSB0");
+        perror(device_path);
     }
 
     /*串口参数设置部分*/

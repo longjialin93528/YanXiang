@@ -12,17 +12,16 @@ class Base_device
 private:
     unsigned int deviceID;
     device_type deviceType;
-    //unsigned int deviceAddress;
+    unsigned int deviceAddress;
 public:
     Base_device();
-    //Base_device(unsigned int id,device_type type, unsigned int address);
+    Base_device(unsigned int id);
     virtual ~Base_device();
     unsigned int get_deviceID();
     void set_deviceID(unsigned int id);
     device_type get_deviceType();
     void set_deviceType(device_type type);
-    //virtual unsigned int get_deviceAddress()=0;
-    //virtual void set_deviceAddress(unsigned int address)=0;
+    unsigned int get_deviceAddress();
 };
 
 #endif //YANXIANG_DEVICE_BASE_H

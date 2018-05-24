@@ -5,7 +5,12 @@
 Base_device::Base_device() {
     deviceID=0;
     deviceType=NONE;
-    //deviceAddress=0;
+    deviceAddress=0;
+}
+Base_device::Base_device(unsigned int id) {
+    deviceID=id;
+    deviceAddress=id;
+    deviceType=NONE;
 }
 Base_device::~Base_device() {
 
@@ -15,6 +20,7 @@ unsigned int Base_device::get_deviceID() {
 }
 void Base_device::set_deviceID(unsigned int id) {
     deviceID=id;
+    deviceAddress=id;
 }
 device_type Base_device::get_deviceType() {
     return deviceType;
@@ -22,11 +28,6 @@ device_type Base_device::get_deviceType() {
 void Base_device::set_deviceType(device_type type) {
     deviceType=type;
 }
-/*
 unsigned int Base_device::get_deviceAddress() {
     return deviceAddress;
 }
-void Base_device::set_deviceAddress(unsigned int address) {
-    deviceAddress=address;
-}
- */

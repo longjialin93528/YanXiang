@@ -12,17 +12,17 @@ class Modbus_device:public Base_device
 private:
     double temperature;
     double humidity;
+    char *device_path;
     char *rd_cmd;
-   // char *wt_cmd;
-    bool is_fullone(char a);
-    double func(int *a,int n);
+    bool is_fullone(char a);//此函数用于温度计算
+    double func(int *a,int n);//用于温度计算
 public:
     Modbus_device();
-    explicit Modbus_device(unsigned int id);
+    Modbus_device(unsigned int id,char *path);
     ~Modbus_device();
     double get_temperature(char a,char b);
     double get_humidity(char a,char b);
-    void set_rd_cmd();
+    void set_rd_cmd();//此函数仅适用于第一个设备
     void show_temperature();
     void show_humidity();
     void run();
