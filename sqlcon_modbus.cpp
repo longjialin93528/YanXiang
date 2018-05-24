@@ -35,7 +35,7 @@ void sqlcon_modbus::connect_sql() {
 void sqlcon_modbus::insert_sql(modbusdata *data) {
     connect_sql();
     char sql_insert[200];
-    sprintf(sql_insert,"insert into %s(id,address,temperature,humidity)values('%d','%d','%lf','%lf')",table_name,data->id,data->address,data->res.temperature,data->res.humidity);
+    sprintf(sql_insert,"insert into %s(id,address,temperature,humidity)values('%d','%d','%lf','%lf')",table_name,data->id,data->address,data->temperature,data->humidity);
     int res=mysql_query(conn,sql_insert);
     if(!res)
     {
@@ -62,9 +62,11 @@ void sqlcon_modbus::update_sql(unsigned int id,double temperature,double humidit
     }
     mysql_close(conn);
 }
-search_id_reasult sqlcon_modbus::search_sql(unsigned int id) {
+modbusdata sqlcon_modbus::search_sql(unsigned int id) {
     connect_sql();
-    search_id_reasult id_reasult;
+    modbusdata id_reasult;
+    id_reasult.id=id;
+    id_reasult.address=id;
     /*对于数据库查询搜索到的结果集进行操作详见以下网址介绍*/
     /* https://www.cnblogs.com/uolo/p/6115448.html */
     /* http://www.w3school.com.cn/sql/sql_select.asp */

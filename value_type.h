@@ -17,16 +17,12 @@ enum device_type
     ENOCEAN,
     NONE
 };
-typedef struct search_id_reasult
-{
-    double temperature;
-    double humidity;
-}search_id_reasult;
 typedef struct modbusdata
 {
     unsigned int id;
     unsigned int address;
-    search_id_reasult res;
+    double temperature;
+    double humidity;
 }modbusdata;
 
 #endif //YANXIANG_VALUE_TYPE_H
