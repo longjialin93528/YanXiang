@@ -4,13 +4,14 @@
 #include "device_modbus.h"
 #include<fcntl.h>
 #include<termios.h>
-#include<stdio.h>
+#include<cstdio>
 #include<stdlib.h>
 #include<unistd.h>
 #include<sys/types.h>
 #include<sys/stat.h>
 #include<string.h>
 #include <cmath>
+using namespace std;
 Modbus_device::Modbus_device() {
     temperature=0.0;
     humidity=0.0;
@@ -25,10 +26,10 @@ Modbus_device::Modbus_device(unsigned int id,char *path) {
 
     temperature=0.0;
     humidity=0.0;
-    rd_cmd=new char[8];
+    rd_cmd=new unsigned char[8];
 
-    //这里是孙文峰的函数；
-
+    //这里是孙文峰的函数
+    set_rd_cmd(rd_cmd,id);
 
     /*深度copy地址值*/
     device_path=new char[strlen(path)+1];
@@ -69,6 +70,74 @@ double Modbus_device::func(int *a, int n) {
         res+=pow(2*a[i],n-i-1);
     }
     return res/10;
+}
+void Modbus_device::InvertUint8(unsigned char *dBuf, unsigned char *srcBuf) {
+    int i;
+    unsigned char tmp[4];
+    tmp[0] = 0;
+    for (i = 0; i< 8; i++)
+    {
+        if (srcBuf[0] & (1 << i))
+            tmp[0] |= 1 << (7 - i);
+    }
+    dBuf[0] = tmp[0];
+}
+void Modbus_device::InvertUint16(unsigned short *dBuf, unsigned short *srcBuf) {
+    int i;
+    unsigned short tmp[4];
+    tmp[0] = 0;
+    for (i = 0; i< 16; i++)
+    {
+        if (srcBuf[0] & (1 << i))
+            tmp[0] |= 1 << (15 - i);
+    }
+    dBuf[0] = tmp[0];
+}
+unsigned short Modbus_device::CRC16_MODBUS(unsigned char *puchMsg, unsigned int usDataLen) {
+    unsigned short wCRCin = 0xFFFF;
+    unsigned short wCPoly = 0x8005;
+    unsigned char wChar = 0;
+
+    while (usDataLen--)
+    {
+        wChar = *(puchMsg++);
+        InvertUint8(&wChar, &wChar);
+        wCRCin ^= (wChar << 8);
+        for (int i = 0; i < 8; i++)
+        {
+            if (wCRCin & 0x8000)
+                wCRCin = (wCRCin << 1) ^ wCPoly;
+            else
+                wCRCin = wCRCin << 1;
+        }
+    }
+    InvertUint16(&wCRCin, &wCRCin);
+    return (wCRCin);
+}
+void Modbus_device::set_rd_cmd(unsigned char *rd_cmd, unsigned int id) {
+    char tmp[5];
+    sprintf(tmp,"%02x", id);
+//	cout << tmp << endl;
+
+    sscanf(tmp, "%02x", &rd_cmd[0]);
+
+    //printf("%02x\n", rd_cmd[0]);
+
+    rd_cmd[1] = 0x03;
+    rd_cmd[2] = 0x00;
+    rd_cmd[3] = 0x00;
+    rd_cmd[4] = 0x00;
+    rd_cmd[5] = 0x02;
+
+    int result = CRC16_MODBUS((unsigned char *)rd_cmd, 6);
+
+    char tmp1[10];
+    cout << result << endl;
+    sprintf(tmp1, "%04x", result);
+    //cout << tmp1 << endl;
+
+    sscanf(tmp1, "%02x", &rd_cmd[6]);
+    sscanf(tmp1+2, "%02x", &rd_cmd[7]);
 }
 /*可供外部调用的共有函数声明*/
 double Modbus_device::get_temperature(char a,char b) {
@@ -141,7 +210,7 @@ double Modbus_device::get_humidity(char a, char b) {
     return humidity;
 }
 void Modbus_device::set_rd_cmd() {
-    rd_cmd=new char[8];
+    rd_cmd=new unsigned char[8];
     rd_cmd[0]=0x01;
     rd_cmd[1]=0x03;
     rd_cmd[2]=0x00;

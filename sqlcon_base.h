@@ -20,8 +20,8 @@ public:
     sqlcon_base();
     sqlcon_base(char *ht, char *usr, char *pad, char *name);
     virtual ~sqlcon_base();
-    virtual void * search_sql(void * data)=0;
-    virtual void insert_sql(void *data)=0;
-    virtual void update_sql(void *data)=0;
+    //virtual void * search_sql(void * data)=0;
+    //virtual void insert_sql(void *data)=0;
+    //virtual void update_sql(void *data)=0;
 };
 #endif //YANXIANG_SQLCON_BASE_H

@@ -13,9 +13,14 @@ private:
     double temperature;
     double humidity;
     char *device_path;
-    char *rd_cmd;
+    unsigned char *rd_cmd;
     bool is_fullone(char a);//此函数用于温度计算
     double func(int *a,int n);//用于温度计算
+    /*用于计算crc循环函数*/
+    void InvertUint8(unsigned char *dBuf, unsigned char *srcBuf);
+    void InvertUint16(unsigned short *dBuf, unsigned short *srcBuf);
+    unsigned short CRC16_MODBUS(unsigned char *puchMsg, unsigned int usDataLen);
+    void set_rd_cmd(unsigned char *rd_cmd,unsigned int id)
 public:
     Modbus_device();
     Modbus_device(unsigned int id,char *path);

@@ -24,5 +24,11 @@ typedef struct modbusdata
     double temperature;
     double humidity;
 }modbusdata;
-
+typedef struct devicedata
+{
+    unsigned int id;
+    char * type;
+    char * path;
+    char * devicelocation;//底层设备安装地点
+}devicedata;
 #endif //YANXIANG_VALUE_TYPE_H
