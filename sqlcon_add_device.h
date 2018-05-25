@@ -20,7 +20,7 @@ public:
     ~sqlcon_add_device();
     void connect_sql();
     devicedata search_sql(unsigned int id);
-    void insert_sql(devicedata *data);
+    void insert_sql(devicedata *data,int n);
     void update_sql(unsigned int id,char * type,char * location,char * path);
     void delete_sql(unsigned int id);
 };

@@ -31,5 +31,7 @@ typedef struct devicedata
     device_type type;
     char * path;
     char * devicelocation;//底层设备安装地点
+    devicedata(int id,device_type type,char * path,char *location):id(id),type(type),path(path),devicelocation(location){};
+    devicedata():id(0),type(NONE),path(nullptr),devicelocation(nullptr){};
 }devicedata;
 #endif //YANXIANG_VALUE_TYPE_H

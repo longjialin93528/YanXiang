@@ -213,17 +213,6 @@ double Modbus_device::get_humidity(char a, char b) {
     humidity=func(c,16);
     return humidity;
 }
-void Modbus_device::set_rd_cmd() {
-    rd_cmd=new unsigned char[8];
-    rd_cmd[0]=0x01;
-    rd_cmd[1]=0x03;
-    rd_cmd[2]=0x00;
-    rd_cmd[3]=0x00;
-    rd_cmd[4]=0x00;
-    rd_cmd[5]=0x02;
-    rd_cmd[6]=0xc4;
-    rd_cmd[7]=0x0b;
-}
 void Modbus_device::show_temperature() {
     std::cout<<"Modbus Device "<<get_deviceID()<<" temperature is "<<temperature<<std::endl;
 }

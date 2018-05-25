@@ -27,7 +27,6 @@ public:
     ~Modbus_device();
     double get_temperature(char a,char b);
     double get_humidity(char a,char b);
-    void set_rd_cmd();//此函数仅适用于第一个设备
     void show_temperature();
     void show_humidity();
     void run();

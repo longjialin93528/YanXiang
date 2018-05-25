@@ -118,19 +118,22 @@ device_type sqlcon_add_device::charToenum(char *str) {
         return NONE ;
     return NONE;
 }
-void sqlcon_add_device::insert_sql(devicedata *data) {
-    char * dtype=enumTochar(data->type);
+void sqlcon_add_device::insert_sql(devicedata *data,int n) {
     connect_sql();
-    char sql_insert[250];
-    sprintf(sql_insert,"insert into %s(id,type,location,path)values('%d',%s,%s,%s)",table_name,data->id,dtype,data->devicelocation,data->path);
-    int res=mysql_query(conn,sql_insert);
-    if(!res)
+    for(int i=0;i<n;i++)
     {
-        cout<<"insert success."<<endl;
-    }
-    else
-    {
-        cout<<"insert failed."<<endl;
+        char * dtype=enumTochar(data->type);
+        char sql_insert[250];
+        sprintf(sql_insert,"insert into %s(id,type,location,path)values('%d',%s,%s,%s)",table_name,data[i].id,dtype,data[i].devicelocation,data[i].path);
+        int res=mysql_query(conn,sql_insert);
+        if(!res)
+        {
+            cout<<"insert success."<<endl;
+        }
+        else
+        {
+            cout<<"insert failed."<<endl;
+        }
     }
     mysql_close(conn);
 }
