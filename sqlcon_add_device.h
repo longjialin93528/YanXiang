@@ -12,14 +12,16 @@ class sqlcon_add_device:public sqlcon_base
 {
 private:
     char * table_name;
+    device_type charToenum(char *str);
+    char * enumTochar(device_type type);
 public:
     sqlcon_add_device();
-    sqlcon_add_device(char * tbname);
+    explicit sqlcon_add_device(char * tbname);
     ~sqlcon_add_device();
     void connect_sql();
     devicedata search_sql(unsigned int id);
     void insert_sql(devicedata *data);
-    void update_sql(unsigned int id,char * location,double humidity);
+    void update_sql(unsigned int id,char * type,char * location,char * path);
     void delete_sql(unsigned int id);
 };
 #endif //YANXIANG_SQLCON_ADD_DEVICE_H

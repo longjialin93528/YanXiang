@@ -20,7 +20,7 @@ private:
     void InvertUint8(unsigned char *dBuf, unsigned char *srcBuf);
     void InvertUint16(unsigned short *dBuf, unsigned short *srcBuf);
     unsigned short CRC16_MODBUS(unsigned char *puchMsg, unsigned int usDataLen);
-    void set_rd_cmd(unsigned char *rd_cmd,unsigned int id)
+    void set_rd_cmd(unsigned char *rd_cmd,unsigned int id);
 public:
     Modbus_device();
     Modbus_device(unsigned int id,char *path);

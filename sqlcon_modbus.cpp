@@ -34,7 +34,7 @@ void sqlcon_modbus::connect_sql() {
 }
 void sqlcon_modbus::insert_sql(modbusdata *data) {
     connect_sql();
-    char sql_insert[200];
+    char sql_insert[250];
     sprintf(sql_insert,"insert into %s(id,address,temperature,humidity)values('%d','%d','%lf','%lf')",table_name,data->id,data->address,data->temperature,data->humidity);
     int res=mysql_query(conn,sql_insert);
     if(!res)

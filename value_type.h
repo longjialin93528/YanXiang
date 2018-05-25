@@ -11,6 +11,7 @@ enum device_type
     MODBUS,
     DIDO,
     MQTT,
+    ISA100,
     BACNET,
     ULE,
     BLE,
@@ -27,7 +28,7 @@ typedef struct modbusdata
 typedef struct devicedata
 {
     unsigned int id;
-    char * type;
+    device_type type;
     char * path;
     char * devicelocation;//底层设备安装地点
 }devicedata;
