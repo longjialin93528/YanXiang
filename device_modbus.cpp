@@ -138,6 +138,10 @@ void Modbus_device::set_rd_cmd(unsigned char *rd_cmd, unsigned int id) {
 
     sscanf(tmp1, "%02x", &rd_cmd[6]);
     sscanf(tmp1+2, "%02x", &rd_cmd[7]);
+    char ch;
+    ch=rd_cmd[7];
+    rd_cmd[7]=rd_cmd[6];
+    rd_cmd[6]=ch;
 }
 /*可供外部调用的共有函数声明*/
 double Modbus_device::get_temperature(char a,char b) {
