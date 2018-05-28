@@ -20,6 +20,12 @@ sqlcon_add_device::~sqlcon_add_device() {
         delete table_name;
     }
 }
+char* sqlcon_add_device::get_tbname() {
+    char * name=new char[strlen(table_name)+1];
+    strcpy(name,table_name);
+    name[strlen(table_name)]='\0';
+    return name;
+}
 void sqlcon_add_device::connect_sql() {
     if(mysql_real_connect(conn,host,user,pd,dbname,0,NULL,0))
     {

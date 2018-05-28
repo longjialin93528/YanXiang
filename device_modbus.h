@@ -6,6 +6,7 @@
 #define YANXIANG_DEVICE_MODBUS_H
 
 #include "device_base.h"
+#include "sqlcon_modbus.h"
 #include <string>
 class Modbus_device:public Base_device
 {
@@ -14,6 +15,7 @@ private:
     double humidity;
     char *device_path;
     unsigned char *rd_cmd;
+    sqlcon_modbus * ptr_sqlcon_modbus;
     bool is_fullone(char a);//此函数用于温度计算
     double func(int *a,int n);//用于温度计算
     /*用于计算crc循环函数*/
@@ -27,6 +29,11 @@ public:
     ~Modbus_device();
     double get_temperature(char a,char b);
     double get_humidity(char a,char b);
+
+    /*用于封装sqlcon_modbus的insert与update方法*/
+    void update();
+    void insert();
+
     void show_temperature();
     void show_humidity();
     void run();

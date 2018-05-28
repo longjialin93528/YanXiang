@@ -75,3 +75,6 @@ sqlcon_base::~sqlcon_base() {
         delete dbname;
     }
 }
+MYSQL* sqlcon_base::get_conn() {
+    return conn;
+}

@@ -9,7 +9,7 @@
 #include <iostream>
 class Base_device
 {
-private:
+protected:
     unsigned int deviceID;
     device_type deviceType;
     unsigned int deviceAddress;
@@ -22,6 +22,9 @@ public:
     device_type get_deviceType();
     void set_deviceType(device_type type);
     unsigned int get_deviceAddress();
+    virtual void run()=0;//纯虚函数，必须实现
+    virtual void insert()=0;
+    virtual void update()=0;
 };
 
 #endif //YANXIANG_DEVICE_BASE_H

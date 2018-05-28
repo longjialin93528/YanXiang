@@ -18,6 +18,7 @@ public:
     sqlcon_add_device();
     explicit sqlcon_add_device(char * tbname);
     ~sqlcon_add_device();
+    char * get_tbname();
     void connect_sql();
     devicedata search_sql(unsigned int id);
     void insert_sql(devicedata *data,int n);

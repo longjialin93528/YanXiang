@@ -18,11 +18,15 @@ Modbus_device::Modbus_device() {
     set_deviceType(MODBUS);
     rd_cmd=NULL;
     device_path=NULL;
+    ptr_sqlcon_modbus=NULL;
 }
 Modbus_device::Modbus_device(unsigned int id,char *path) {
     /*借用基类的构造函数同时赋值id与address*/
     set_deviceID(id);
     set_deviceType(MODBUS);
+
+    /*创建modbus连接数据库对象，由于在modbus_device构造类里，所以给其直接传入modbus数据库表名字mb_sensor*/
+    ptr_sqlcon_modbus=new sqlcon_modbus("mb_sensor");
 
     temperature=0.0;
     humidity=0.0;
@@ -213,6 +217,18 @@ double Modbus_device::get_humidity(char a, char b) {
     humidity=func(c,16);
     return humidity;
 }
+void Modbus_device::update() {
+    unsigned int id=get_deviceID();
+    ptr_sqlcon_modbus->update_sql(id,temperature,humidity);
+}
+void Modbus_device::insert() {
+    modbusdata data;
+    data.id=get_deviceID();
+    data.address=get_deviceID();
+    data.temperature=temperature;
+    data.humidity=humidity;
+    ptr_sqlcon_modbus->insert_sql(&data);
+}
 void Modbus_device::show_temperature() {
     std::cout<<"Modbus Device "<<get_deviceID()<<" temperature is "<<temperature<<std::endl;
 }
@@ -247,8 +263,6 @@ void Modbus_device::run() {
 
     char buf[9];
     memset(buf,0,9);
-    set_rd_cmd();
-
     ssize_t wr_num=write(fd,rd_cmd,8);
     sleep(1);
     ssize_t rd_num=read(fd,buf,9);
