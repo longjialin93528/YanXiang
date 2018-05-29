@@ -95,7 +95,7 @@ modbusdata sqlcon_modbus::search_sql(unsigned int id) {
     }
     else
     {
-        cout<<"search failed."<<endl;
+        cout<<"sqlcon_modbus search failed."<<endl;
         exit(1);
     }
 }

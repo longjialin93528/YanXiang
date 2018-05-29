@@ -38,64 +38,86 @@ void sqlcon_add_device::connect_sql() {
 }
 char* sqlcon_add_device::enumTochar(device_type type) {
     /*因为devicedata结构体里设备类型是自定义的enum类型，无法存入数据库，最好转换成字符串存入数据库*/
-    char *dtype;
+    char *dtype=NULL;
     switch (type)
     {
         case REST:
+        {
             char temp[]="REST";
             dtype=new char[5];
             strcpy(dtype,temp);
             dtype[4]='\0';
+        }
         case OPC_UA:
+        {
             char temp1[]="OPC_UA";
             dtype=new char[7];
             strcpy(dtype,temp1);
             dtype[6]='\0';
+        }
         case MODBUS:
+        {
             char temp2[]="MODBUS";
             dtype=new char[7];
             strcpy(dtype,temp2);
             dtype[6]='\0';
+        }
         case DIDO:
+        {
             char temp3[]="DIDO";
             dtype=new char[5];
             strcpy(dtype,temp3);
             dtype[4]='\0';
+        }
         case MQTT:
+        {
             char temp4[]="MQTT";
             dtype=new char[5];
             strcpy(dtype,temp4);
             dtype[4]='\0';
+        }
         case ISA100:
+        {
             char temp5[]="ISA100";
             dtype=new char[7];
             strcpy(dtype,temp5);
             dtype[6]='\0';
+        }
         case BACNET:
+        {
             char temp6[]="BACNET";
             dtype=new char[7];
             strcpy(dtype,temp6);
             dtype[6]='\0';
+        }
         case ULE:
+        {
             char temp7[]="ULE";
             dtype=new char[4];
             strcpy(dtype,temp7);
             dtype[3]='\0';
+        }
         case BLE:
+        {
             char temp8[]="BLE";
             dtype=new char[4];
             strcpy(dtype,temp8);
             dtype[3]='\0';
+        }
         case ENOCEAN:
+        {
             char temp9[]="ENOCEAN";
             dtype=new char[8];
             strcpy(dtype,temp9);
             dtype[7]='\0';
+        }
         default:
+        {
             char temp10[]="NONE";
             dtype=new char[5];
             strcpy(dtype,temp10);
             dtype[4]='\0';
+        }
     }
     return dtype;
 }
@@ -168,6 +190,7 @@ devicedata sqlcon_add_device::search_sql(unsigned int id) {
                 data.devicelocation=row[1];
                 data.path=row[2];
             }
+            mysql_close(get_conn());
             return data;
         }
 
@@ -175,6 +198,7 @@ devicedata sqlcon_add_device::search_sql(unsigned int id) {
         cout<<"search failed."<<endl;
         exit(1);
     }
+
 }
 void sqlcon_add_device::update_sql(unsigned int id, char *type, char *location, char *path) {
     connect_sql();
@@ -204,4 +228,5 @@ void sqlcon_add_device::delete_sql(unsigned int id) {
     {
         cout<<"delete failed."<<endl;
     }
+    mysql_close(get_conn());
 }

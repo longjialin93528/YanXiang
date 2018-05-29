@@ -18,7 +18,7 @@ Base_device* device_manager::chooseToCreate(MYSQL_ROW row) {
     Base_device * ptr_baseDevice=NULL;
     if(strcmp(row[1],"MODBUS")==0)
     {
-        int id= static_cast<int>(row[0]);
+        int id= atoi(row[0]);
         ptr_baseDevice=new Modbus_device(id,row[3]);
         return ptr_baseDevice;
     }
@@ -44,7 +44,7 @@ void device_manager::addDeviceToList() {
         {
             while((row=mysql_fetch_row(reasult))!=NULL)/*开始遍历每一行设备*/
             {
-                int tempnum= static_cast<int>(row[0]);
+                int tempnum= atoi(row[0]);
                 if(find_Device.find(tempnum)!=find_Device.end())
                 {
                     continue;
@@ -63,6 +63,7 @@ void device_manager::addDeviceToList() {
         cout<<"search failed."<<endl;
         exit(1);
     }
+    mysql_close(addDevice_ptr->get_conn());
 }
 void device_manager::run() {
     while(1)

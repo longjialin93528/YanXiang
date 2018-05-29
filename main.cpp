@@ -1,10 +1,6 @@
-#include "device_modbus.h"
+#include "device_manager.h"
 int main() {
-
-    Modbus_device * ptr_device=new Modbus_device();
-    ptr_device->run();
-    ptr_device->show_humidity();
-    ptr_device->show_temperature();
-
+    device_manager * ptr=new device_manager("device_info");
+    ptr->run();
     return 0;
 }

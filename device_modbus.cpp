@@ -136,7 +136,7 @@ void Modbus_device::set_rd_cmd(unsigned char *rd_cmd, unsigned int id) {
     int result = CRC16_MODBUS((unsigned char *)rd_cmd, 6);
 
     char tmp1[10];
-    cout << result << endl;
+    //cout << result << endl;
     sprintf(tmp1, "%04x", result);
     //cout << tmp1 << endl;
 
