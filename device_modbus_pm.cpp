@@ -1,7 +1,8 @@
 //
-// Created by long on 2018/5/18.
+// Created by long on 2018/5/30.
 //
-#include "device_modbus.h"
+
+#include "device_modbus_pm.h"
 #include<fcntl.h>
 #include<termios.h>
 #include<cstdio>
@@ -10,26 +11,24 @@
 #include<sys/types.h>
 #include<sys/stat.h>
 #include<string.h>
-#include <cmath>
-using namespace std;
-Modbus_device::Modbus_device() {
-    temperature=0.0;
-    humidity=0.0;
-    set_deviceType(MODBUS);
+Modbus_device_pm::Modbus_device_pm() {
+    PM2=0;
+    PM10=0;
+    set_deviceType(MODBUS_PM);
     rd_cmd=NULL;
     device_path=NULL;
-    ptr_sqlcon_modbus=NULL;
+    ptr_sqlcon_modbus_pm=NULL;
 }
-Modbus_device::Modbus_device(unsigned int id,char *path) {
+Modbus_device_pm::Modbus_device_pm(unsigned int id, char *path) {
     /*借用基类的构造函数同时赋值id与address*/
     set_deviceID(id);
-    set_deviceType(MODBUS);
+    set_deviceType(MODBUS_PM);
 
     /*创建modbus连接数据库对象，由于在modbus_device构造类里，所以给其直接传入modbus数据库表名字mb_sensor*/
-    ptr_sqlcon_modbus=new sqlcon_modbus("mb_sensor");
+    ptr_sqlcon_modbus_pm=new sqlcon_modbus_pm("mbpm_sensor");
 
-    temperature=0.0;
-    humidity=0.0;
+    PM2=0;
+    PM10=0;
     rd_cmd=new unsigned char[8];
 
     //这里是孙文峰的函数
@@ -40,7 +39,7 @@ Modbus_device::Modbus_device(unsigned int id,char *path) {
     strcpy(device_path,path);
     device_path[strlen(path)]='\0';
 }
-Modbus_device::~Modbus_device() {
+Modbus_device_pm::~Modbus_device_pm() {
     if(rd_cmd!= NULL)
     {
         delete rd_cmd;
@@ -49,37 +48,13 @@ Modbus_device::~Modbus_device() {
     {
         delete device_path;
     }
-    if(ptr_sqlcon_modbus!=NULL)
+    if(ptr_sqlcon_modbus_pm!=NULL)
     {
-        delete ptr_sqlcon_modbus;
+        delete ptr_sqlcon_modbus_pm;
     }
 }
 /*私有函数的声明，主要服务于内部函数的实现*/
-bool Modbus_device::is_fullone(char a) {
-    unsigned char flag=0x01;
-    bool res=1;
-    int i;
-    for(i=7;i>=0;i--)
-    {
-        if(!(flag&a))
-        {
-            res=0;
-            return  res;
-        }
-        flag=flag<<1;
-    }
-    return res;
-}
-double Modbus_device::func(int *a, int n) {
-    int i;
-    double res=0.0;
-    for(i=0;i<n;i++)
-    {
-        res+=pow(2*a[i],n-i-1);
-    }
-    return res/10;
-}
-void Modbus_device::InvertUint8(unsigned char *dBuf, unsigned char *srcBuf) {
+void Modbus_device_pm::InvertUint8(unsigned char *dBuf, unsigned char *srcBuf) {
     int i;
     unsigned char tmp[4];
     tmp[0] = 0;
@@ -90,7 +65,7 @@ void Modbus_device::InvertUint8(unsigned char *dBuf, unsigned char *srcBuf) {
     }
     dBuf[0] = tmp[0];
 }
-void Modbus_device::InvertUint16(unsigned short *dBuf, unsigned short *srcBuf) {
+void Modbus_device_pm::InvertUint16(unsigned short *dBuf, unsigned short *srcBuf) {
     int i;
     unsigned short tmp[4];
     tmp[0] = 0;
@@ -101,7 +76,7 @@ void Modbus_device::InvertUint16(unsigned short *dBuf, unsigned short *srcBuf) {
     }
     dBuf[0] = tmp[0];
 }
-unsigned short Modbus_device::CRC16_MODBUS(unsigned char *puchMsg, unsigned int usDataLen) {
+unsigned short Modbus_device_pm::CRC16_MODBUS(unsigned char *puchMsg, unsigned int usDataLen) {
     unsigned short wCRCin = 0xFFFF;
     unsigned short wCPoly = 0x8005;
     unsigned char wChar = 0;
@@ -122,7 +97,7 @@ unsigned short Modbus_device::CRC16_MODBUS(unsigned char *puchMsg, unsigned int 
     InvertUint16(&wCRCin, &wCRCin);
     return (wCRCin);
 }
-void Modbus_device::set_rd_cmd(unsigned char *rd_cmd, unsigned int id) {
+void Modbus_device_pm::set_rd_cmd(unsigned char *rd_cmd, unsigned int id) {
     char tmp[5];
     sprintf(tmp,"%02x", id);
 //	cout << tmp << endl;
@@ -151,56 +126,30 @@ void Modbus_device::set_rd_cmd(unsigned char *rd_cmd, unsigned int id) {
     rd_cmd[7]=rd_cmd[6];
     rd_cmd[6]=ch;
 }
-/*可供外部调用的共有函数声明*/
-double Modbus_device::get_temperature(char a,char b) {
-    double temperature=0.0;
-    int c[9]={0};
-    int i;
-    unsigned char flag=0x01;
-    if(is_fullone(a))
+/*私有函数的声明，主要服务于内部函数的实现*/
+unsigned int Modbus_device_pm::my_pow(int n) {
+    unsigned int res=1;
+    for(int i=0;i<n;i++)
     {
-        for(i=8;i>=1;i--)//小于0补码取反的过程
-        {
-            if(flag&b)
-            {
-                c[i]=0;
-            }
-            else
-            {
-                c[i]=1;
-            }
-            flag=flag<<1;
-        }
-        c[8]=c[8]+1;
-        for(i=8;i>=0;i--)//加一的过程
-        {
-            if(c[i]>=2)
-            {
-                c[i-1]=c[i-1]+1;
-                c[i]=c[i]%2;
-            }
-        }
-        temperature=-func(c,9);
+        res=res*2;
     }
-    else
-    {
-        for(i=0;i<8;i++)
-        {
-            if(flag&b)
-            {
-                c[i]=1;
-            }
-            flag=flag<<1;
-        }
-        temperature=func(c,9);
-    }
-    return temperature;
+    return res;
 }
-double Modbus_device::get_humidity(char a, char b) {
-    int i;
+unsigned int Modbus_device_pm::get_hec(int *str) {
+    unsigned int sum=0;
+    for(int i=0;i<16;i++)
+    {
+        sum+=str[i]*my_pow(15-i);
+    }
+    return sum;
+}
+/*可供外部调用的共有函数声明*/
+unsigned int Modbus_device_pm::get_PM2(char a, char b) {
+    unsigned int PM2=0;
     int c[16]={0};
+    int i;
     unsigned char flag=0x01;
-    for(i=15;i>7;i--)
+    for(i=15;i>=8;i--)
     {
         if(flag&b)
         {
@@ -209,7 +158,6 @@ double Modbus_device::get_humidity(char a, char b) {
         flag=flag<<1;
     }
     flag=0x01;
-    double humidity=0.0;
     for(i=7;i>=0;i--)
     {
         if(flag&a)
@@ -218,28 +166,53 @@ double Modbus_device::get_humidity(char a, char b) {
         }
         flag=flag<<1;
     }
-    humidity=func(c,16);
-    return humidity;
+    PM2=get_hec(c);
+    return PM2;
 }
-void Modbus_device::update() {
+unsigned int Modbus_device_pm::get_PM10(char a, char b) {
+    unsigned int PM10=0;
+    int c[16]={0};
+    int i;
+    unsigned char flag=0x01;
+    for(i=15;i>=8;i--)
+    {
+        if(flag&b)
+        {
+            c[i]=1;
+        }
+        flag=flag<<1;
+    }
+    flag=0x01;
+    for(i=7;i>=0;i--)
+    {
+        if(flag&a)
+        {
+            c[i]=1;
+        }
+        flag=flag<<1;
+    }
+    PM10=get_hec(c);
+    return PM10;
+}
+void Modbus_device_pm::update() {
     unsigned int id=get_deviceID();
-    ptr_sqlcon_modbus->update_sql(id,temperature,humidity);
+    ptr_sqlcon_modbus_pm->update_sql(id,PM2,PM10);
 }
-void Modbus_device::insert() {
-    modbusdata data;
+void Modbus_device_pm::insert() {
+    modbusPMdata data;
     data.id=get_deviceID();
     data.address=get_deviceID();
-    data.temperature=temperature;
-    data.humidity=humidity;
-    ptr_sqlcon_modbus->insert_sql(&data);
+    data.PM2=PM2;
+    data.PM10=PM10;
+    ptr_sqlcon_modbus_pm->insert_sql(&data);
 }
-void Modbus_device::show_temperature() {
-    std::cout<<"Modbus Device "<<get_deviceID()<<" temperature is "<<temperature<<std::endl;
+void Modbus_device_pm::show_PM2() {
+    std::cout<<"Modbus PM Device "<<get_deviceID()<<" PM2.5 is "<<PM2<<endl;
 }
-void Modbus_device::show_humidity() {
-    std::cout<<"Modbus Device "<<get_deviceID()<<" humidity is "<<humidity<<std::endl;
+void Modbus_device_pm::show_PM10() {
+    std::cout<<"Modbus PM Device "<<get_deviceID()<<" PM10 is "<<PM10<<endl;
 }
-void Modbus_device::run() {
+void Modbus_device_pm::run() {
     /*串口打开部分*/
     int fd;
     fd=open(device_path,O_RDWR|O_NOCTTY|O_NDELAY);
@@ -270,7 +243,7 @@ void Modbus_device::run() {
     ssize_t wr_num=write(fd,rd_cmd,8);
     sleep(1);
     ssize_t rd_num=read(fd,buf,9);
-    temperature=get_temperature(buf[5],buf[6]);
-    humidity=get_humidity(buf[3],buf[4]);
+    PM2=get_PM2(buf[3],buf[4]);
+    PM10=get_PM10(buf[5],buf[6]);
     close(fd);
 }

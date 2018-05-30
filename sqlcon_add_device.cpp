@@ -111,6 +111,13 @@ char* sqlcon_add_device::enumTochar(device_type type) {
             strcpy(dtype,temp9);
             dtype[7]='\0';
         }
+        case MODBUS_PM:
+        {
+            char temp10[]="MODBUS_PM";
+            dtype=new char[10];
+            strcpy(dtype,temp10);
+            dtype[9]='\0';
+        }
         default:
         {
             char temp10[]="NONE";
@@ -144,6 +151,8 @@ device_type sqlcon_add_device::charToenum(char *str) {
         return ENOCEAN;
     if(strcmp(str,"NONE")==0)
         return NONE ;
+    if(strcmp(str,"MODBUS_PM")==0)
+        return MODBUS_PM;
     return NONE;
 }
 void sqlcon_add_device::insert_sql(devicedata *data,int n) {
