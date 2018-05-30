@@ -10,6 +10,8 @@
 #include "device_modbus.h"
 #include "sqlcon_modbus_pm.h"
 #include "device_modbus_pm.h"
+#include "sqlcon_dido.h"
+#include "device_dido.h"
 #include <unistd.h>
 #include <unordered_map>
 #include <vector>

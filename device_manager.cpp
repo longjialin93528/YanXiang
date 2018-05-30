@@ -28,6 +28,12 @@ Base_device* device_manager::chooseToCreate(MYSQL_ROW row) {
         ptr_baseDevice=new Modbus_device_pm(id,row[3]);
         return ptr_baseDevice;
     }
+    if(strcmp(row[1],"DIDO")==0)
+    {
+        int id=atoi(row[0]);
+        ptr_baseDevice=new Modbus_device_dido(id,row[3]);
+        return ptr_baseDevice;
+    }
     /*这里要写入多种判断情形，因为设备不止一种，有不同的构造函数*/
 }
 void device_manager::addDeviceToList() {

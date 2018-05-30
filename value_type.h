@@ -35,6 +35,19 @@ typedef struct modbusPMdata
     unsigned int PM2;
     unsigned int PM10;
 }modbusPMdata;
+typedef struct didodata
+{
+    unsigned int id;
+    unsigned int address;
+    unsigned int di1;
+    unsigned int di2;
+    unsigned int di3;
+    unsigned int di4;
+    unsigned int di5;
+    unsigned int di6;
+    unsigned int di7;
+    unsigned int di8;
+};
 typedef struct devicedata
 {
     unsigned int id;

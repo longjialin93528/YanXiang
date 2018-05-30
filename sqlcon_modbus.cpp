@@ -90,6 +90,7 @@ modbusdata sqlcon_modbus::search_sql(unsigned int id) {
                 id_reasult.temperature=atof(row[0]);//row[0]结果是字符串，用atof函数进行转换
                 id_reasult.humidity=atof(row[1]);
             }
+            mysql_close(conn);
             return id_reasult;
         }
     }
@@ -112,4 +113,5 @@ void sqlcon_modbus::delete_sql(unsigned int id) {
     {
         cout<<"delete failed."<<endl;
     }
+    mysql_close(conn);
 }
