@@ -41,6 +41,7 @@ Modbus_device_dido::Modbus_device_dido(unsigned int id, char *path) {
     di8=0;
 
     //这里是孙文峰的函数
+    rd_cmd=new unsigned char[8];
     set_rd_cmd(rd_cmd,id);
 
     /*深度copy地址值*/
