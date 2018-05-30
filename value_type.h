@@ -18,7 +18,8 @@ enum device_type
     ULE,
     BLE,
     ENOCEAN,
-    NONE
+    NONE,
+    MODBUS_PM
 };
 typedef struct modbusdata
 {
@@ -27,6 +28,13 @@ typedef struct modbusdata
     double temperature;
     double humidity;
 }modbusdata;
+typedef struct modbusPMdata
+{
+    unsigned int id;
+    unsigned int address;
+    unsigned int PM2;
+    unsigned int PM10;
+}modbusPMdata;
 typedef struct devicedata
 {
     unsigned int id;
