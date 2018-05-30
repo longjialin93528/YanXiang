@@ -25,7 +25,8 @@ Base_device* device_manager::chooseToCreate(MYSQL_ROW row) {
     if(strcmp(row[1],"MODBUS_PM")==0)
     {
         int id=atoi(row[0]);
-
+        ptr_baseDevice=new Modbus_device_pm(id,row[3]);
+        return ptr_baseDevice;
     }
     /*这里要写入多种判断情形，因为设备不止一种，有不同的构造函数*/
 }

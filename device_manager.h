@@ -8,6 +8,8 @@
 #include "sqlcon_add_device.h"
 #include "sqlcon_modbus.h"
 #include "device_modbus.h"
+#include "sqlcon_modbus_pm.h"
+#include "device_modbus_pm.h"
 #include <unistd.h>
 #include <unordered_map>
 #include <vector>
