@@ -116,7 +116,7 @@ void Modbus_device_dido::set_rd_cmd(unsigned char *rd_cmd, unsigned int id) {
 
     //printf("%02x\n", rd_cmd[0]);
 
-    rd_cmd[1] = 0x01;
+    rd_cmd[1] = 0x02;
     rd_cmd[2] = 0x00;
     rd_cmd[3] = 0x00;
     rd_cmd[4] = 0x00;
