@@ -16,10 +16,10 @@ device_manager::~device_manager() {
 }
 Base_device* device_manager::chooseToCreate(MYSQL_ROW row) {
     Base_device * ptr_baseDevice=NULL;
-    if(strcmp(row[1],"MODBUS")==0)
+    if(strcmp(row[1],"MODBUS_TH")==0)
     {
         int id= atoi(row[0]);
-        ptr_baseDevice=new Modbus_device(id,row[3]);
+        ptr_baseDevice=new Modbus_device_th(id,row[3]);
         return ptr_baseDevice;
     }
     if(strcmp(row[1],"MODBUS_PM")==0)

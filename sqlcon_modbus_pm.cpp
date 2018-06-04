@@ -23,16 +23,6 @@ sqlcon_modbus_pm::~sqlcon_modbus_pm() {
         delete table_name;
     }
 }
-void sqlcon_modbus_pm::connect_sql() {
-    if(mysql_real_connect(conn,host,user,pd,dbname,0,NULL,0))
-    {
-        cout<<"connect success."<<endl;
-    }
-    else
-    {
-        cout<<"connect failed."<<endl;
-    }
-}
 void sqlcon_modbus_pm::insert_sql(modbusPMdata *data) {
     connect_sql();
     char sql_insert[250];

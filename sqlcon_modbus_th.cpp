@@ -1,38 +1,29 @@
 //
-// Created by long on 2018/5/21.
+// Created by long on 2018/6/4.
 //
-#include "sqlcon_modbus.h"
-sqlcon_modbus::sqlcon_modbus() {
+
+#include "sqlcon_modbus_th.h"
+sqlcon_modbus_th::sqlcon_modbus_th() {
     table_name=NULL;
 }
-sqlcon_modbus::sqlcon_modbus(char *ht, char *usr, char *pad, char *name,char * tbname) {
+sqlcon_modbus_th::sqlcon_modbus_th(char *ht, char *usr, char *pad, char *name,char * tbname) {
     sqlcon_base(ht,usr,pad,name);
     table_name=new char[strlen(tbname)+1];
     strcpy(table_name,tbname);
     table_name[strlen(tbname)]='\0';
 }
-sqlcon_modbus::sqlcon_modbus(char *tbname) {
+sqlcon_modbus_th::sqlcon_modbus_th(char *tbname) {
     table_name=new char[strlen(tbname)+1];
     strcpy(table_name,tbname);
     table_name[strlen(tbname)]='\0';
 }
-sqlcon_modbus::~sqlcon_modbus() {
+sqlcon_modbus_th::~sqlcon_modbus_th() {
     if(table_name!=NULL)
     {
         delete table_name;
     }
 }
-void sqlcon_modbus::connect_sql() {
-    if(mysql_real_connect(conn,host,user,pd,dbname,0,NULL,0))
-    {
-        cout<<"connect success."<<endl;
-    }
-    else
-    {
-        cout<<"connect failed."<<endl;
-    }
-}
-void sqlcon_modbus::insert_sql(modbusdata *data) {
+void sqlcon_modbus_th::insert_sql(modbusdata *data) {
     connect_sql();
     char sql_insert[250];
     sprintf(sql_insert,"insert into %s(id,address,temperature,humidity)values('%d','%d','%lf','%lf')",table_name,data->id,data->address,data->temperature,data->humidity);
@@ -47,7 +38,7 @@ void sqlcon_modbus::insert_sql(modbusdata *data) {
     }
     mysql_close(conn);
 }
-void sqlcon_modbus::update_sql(unsigned int id,double temperature,double humidity) {
+void sqlcon_modbus_th::update_sql(unsigned int id,double temperature,double humidity) {
     connect_sql();
     char sql_update[200];
     sprintf(sql_update,"update %s set temperature=%lf,humidity=%lf where id=%d",table_name,temperature,humidity,id);
@@ -62,7 +53,7 @@ void sqlcon_modbus::update_sql(unsigned int id,double temperature,double humidit
     }
     mysql_close(conn);
 }
-modbusdata sqlcon_modbus::search_sql(unsigned int id) {
+modbusdata sqlcon_modbus_th::search_sql(unsigned int id) {
     connect_sql();
     modbusdata id_reasult;
     id_reasult.id=id;
@@ -100,7 +91,7 @@ modbusdata sqlcon_modbus::search_sql(unsigned int id) {
         exit(1);
     }
 }
-void sqlcon_modbus::delete_sql(unsigned int id) {
+void sqlcon_modbus_th::delete_sql(unsigned int id) {
     connect_sql();
     char sql_delete[200];
     sprintf(sql_delete,"delete from %s where id=%d",table_name,id);

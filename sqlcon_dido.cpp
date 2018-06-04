@@ -23,16 +23,6 @@ sqlcon_dido::~sqlcon_dido() {
         delete table_name;
     }
 }
-void sqlcon_dido::connect_sql() {
-    if(mysql_real_connect(conn,host,user,pd,dbname,0,NULL,0))
-    {
-        cout<<"connect success."<<endl;
-    }
-    else
-    {
-        cout<<"connect failed."<<endl;
-    }
-}
 void sqlcon_dido::insert_sql(didodata *data) {
     connect_sql();
     char sql_insert[300];

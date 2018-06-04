@@ -10,7 +10,7 @@ enum device_type
 {
     REST=0,
     OPC_UA,
-    MODBUS,
+    MODBUS_TH,
     DIDO,
     MQTT,
     ISA100,

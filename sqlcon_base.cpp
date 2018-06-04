@@ -3,6 +3,7 @@
 //
 
 #include "sqlcon_base.h"
+#include <iostream>
 sqlcon_base::sqlcon_base() {
     conn=new MYSQL();
     mysql_init(conn);
@@ -77,4 +78,14 @@ sqlcon_base::~sqlcon_base() {
 }
 MYSQL* sqlcon_base::get_conn() {
     return conn;
+}
+void sqlcon_base::connect_sql() {
+    if(mysql_real_connect(conn,host,user,pd,dbname,0,NULL,0))
+    {
+        cout<<"connect success."<<endl;
+    }
+    else
+    {
+        cout<<"connect failed."<<endl;
+    }
 }

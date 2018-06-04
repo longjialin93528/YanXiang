@@ -26,16 +26,6 @@ char* sqlcon_add_device::get_tbname() {
     name[strlen(table_name)]='\0';
     return name;
 }
-void sqlcon_add_device::connect_sql() {
-    if(mysql_real_connect(conn,host,user,pd,dbname,0,NULL,0))
-    {
-        cout<<"connect success."<<endl;
-    }
-    else
-    {
-        cout<<"connect failed."<<endl;
-    }
-}
 char* sqlcon_add_device::enumTochar(device_type type) {
     /*因为devicedata结构体里设备类型是自定义的enum类型，无法存入数据库，最好转换成字符串存入数据库*/
     char *dtype=NULL;
@@ -55,12 +45,12 @@ char* sqlcon_add_device::enumTochar(device_type type) {
             strcpy(dtype,temp1);
             dtype[6]='\0';
         }
-        case MODBUS:
+        case MODBUS_TH:
         {
-            char temp2[]="MODBUS";
-            dtype=new char[7];
+            char temp2[]="MODBUS_TH";
+            dtype=new char[10];
             strcpy(dtype,temp2);
-            dtype[6]='\0';
+            dtype[9]='\0';
         }
         case DIDO:
         {
@@ -133,8 +123,8 @@ device_type sqlcon_add_device::charToenum(char *str) {
         return REST;
     if(strcmp(str,"OPC_UA")==0)
         return OPC_UA;
-    if(strcmp(str,"MODBUS")==0)
-        return MODBUS;
+    if(strcmp(str,"MODBUS_TH")==0)
+        return MODBUS_TH;
     if(strcmp(str,"DIDO")==0)
         return DIDO;
     if(strcmp(str,"MQTT")==0)

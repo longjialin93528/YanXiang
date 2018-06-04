@@ -15,8 +15,6 @@ Modbus_device_pm::Modbus_device_pm() {
     PM2=0;
     PM10=0;
     set_deviceType(MODBUS_PM);
-    rd_cmd=NULL;
-    device_path=NULL;
     ptr_sqlcon_modbus_pm=NULL;
 }
 Modbus_device_pm::Modbus_device_pm(unsigned int id, char *path) {
@@ -40,71 +38,16 @@ Modbus_device_pm::Modbus_device_pm(unsigned int id, char *path) {
     device_path[strlen(path)]='\0';
 }
 Modbus_device_pm::~Modbus_device_pm() {
-    if(rd_cmd!= NULL)
-    {
-        delete rd_cmd;
-    }
-    if(device_path!=NULL)
-    {
-        delete device_path;
-    }
     if(ptr_sqlcon_modbus_pm!=NULL)
     {
         delete ptr_sqlcon_modbus_pm;
     }
 }
 /*私有函数的声明，主要服务于内部函数的实现*/
-void Modbus_device_pm::InvertUint8(unsigned char *dBuf, unsigned char *srcBuf) {
-    int i;
-    unsigned char tmp[4];
-    tmp[0] = 0;
-    for (i = 0; i< 8; i++)
-    {
-        if (srcBuf[0] & (1 << i))
-            tmp[0] |= 1 << (7 - i);
-    }
-    dBuf[0] = tmp[0];
-}
-void Modbus_device_pm::InvertUint16(unsigned short *dBuf, unsigned short *srcBuf) {
-    int i;
-    unsigned short tmp[4];
-    tmp[0] = 0;
-    for (i = 0; i< 16; i++)
-    {
-        if (srcBuf[0] & (1 << i))
-            tmp[0] |= 1 << (15 - i);
-    }
-    dBuf[0] = tmp[0];
-}
-unsigned short Modbus_device_pm::CRC16_MODBUS(unsigned char *puchMsg, unsigned int usDataLen) {
-    unsigned short wCRCin = 0xFFFF;
-    unsigned short wCPoly = 0x8005;
-    unsigned char wChar = 0;
-
-    while (usDataLen--)
-    {
-        wChar = *(puchMsg++);
-        InvertUint8(&wChar, &wChar);
-        wCRCin ^= (wChar << 8);
-        for (int i = 0; i < 8; i++)
-        {
-            if (wCRCin & 0x8000)
-                wCRCin = (wCRCin << 1) ^ wCPoly;
-            else
-                wCRCin = wCRCin << 1;
-        }
-    }
-    InvertUint16(&wCRCin, &wCRCin);
-    return (wCRCin);
-}
 void Modbus_device_pm::set_rd_cmd(unsigned char *rd_cmd, unsigned int id) {
     char tmp[5];
     sprintf(tmp,"%02x", id);
-//	cout << tmp << endl;
-
     sscanf(tmp, "%02x", &rd_cmd[0]);
-
-    //printf("%02x\n", rd_cmd[0]);
 
     rd_cmd[1] = 0x03;
     rd_cmd[2] = 0x00;
@@ -115,9 +58,8 @@ void Modbus_device_pm::set_rd_cmd(unsigned char *rd_cmd, unsigned int id) {
     int result = CRC16_MODBUS((unsigned char *)rd_cmd, 6);
 
     char tmp1[10];
-    //cout << result << endl;
+
     sprintf(tmp1, "%04x", result);
-    //cout << tmp1 << endl;
 
     sscanf(tmp1, "%02x", &rd_cmd[6]);
     sscanf(tmp1+2, "%02x", &rd_cmd[7]);
